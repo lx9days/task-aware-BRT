@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Alignment Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="toolbar" aria-label="布局控制区域">
+        <div class="control-group">
+          <h2>低级动作</h2>
+          <div id="action-buttons" class="button-grid compact-grid"></div>
+        </div>
+
+        <div class="control-group">
+          <h2>对象</h2>
+          <div id="target-buttons" class="button-grid compact-grid"></div>
+          <p id="task-line" class="task-line"></p>
+        </div>
+
+        <div class="control-group">
+          <h2>数据</h2>
+          <div id="dataset-buttons" class="button-grid"></div>
+        </div>
+
+        <div class="control-group">
+          <h2>对齐规则</h2>
+          <div id="alignment-buttons" class="button-grid"></div>
+        </div>
+      </section>
+
+      <section class="canvas-section">
+        <div class="canvas-wrap">
+          <svg id="tree-svg" viewBox="0 0 1200 760" aria-label="树布局可视化">
+            <g class="viewport">
+              <g class="links"></g>
+              <g class="nodes"></g>
+            </g>
+          </svg>
+          <div id="tooltip" class="tooltip hidden"></div>
+        </div>
+        <p id="stats-line" class="stats-line"></p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="./main.js?v=15"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+node_modules/
+.trae/
+dist/
+coverage/
+*.log
