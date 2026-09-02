@@ -66,6 +66,43 @@ button {
   line-height: 1.6;
 }
 
+.task-panel {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+
+.task-summary,
+.task-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.task-summary {
+  color: var(--text);
+}
+
+.task-demands {
+  margin: 10px 0;
+  padding-left: 18px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.task-demands li + li {
+  margin-top: 4px;
+}
+
+.task-note {
+  margin-top: 8px;
+  color: var(--text);
+}
+
+.task-note--muted {
+  color: var(--muted);
+}
+
 .option-button {
   width: 100%;
   padding: 12px 14px;
@@ -113,6 +150,90 @@ button {
 
 .canvas-section {
   min-width: 0;
+}
+
+.reference-section {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+}
+
+.reference-section__inner {
+  border-top: 1px solid var(--border-strong);
+  padding-top: 20px;
+}
+
+.reference-section__inner h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.reference-intro,
+.reference-note-title {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.reference-intro {
+  color: var(--muted);
+}
+
+.table-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.reference-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.reference-table th,
+.reference-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.reference-table th {
+  font-weight: 700;
+}
+
+.reference-table td:first-child,
+.reference-table th:first-child {
+  min-width: 140px;
+}
+
+.reference-table td:nth-child(2),
+.reference-table th:nth-child(2) {
+  min-width: 280px;
+}
+
+.reference-table td:nth-child(3),
+.reference-table th:nth-child(3) {
+  min-width: 140px;
+}
+
+.reference-note-block {
+  margin-top: 14px;
+}
+
+.reference-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.reference-list li + li {
+  margin-top: 4px;
 }
 
 #tree-svg {
@@ -217,6 +338,10 @@ button {
 @media (max-width: 720px) {
   .app-shell {
     padding: 16px;
+  }
+
+  .reference-section {
+    padding: 0 16px 16px;
   }
 
   #tree-svg {

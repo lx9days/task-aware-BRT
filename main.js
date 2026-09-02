@@ -137,6 +137,125 @@ const scenarioMatrix = {
   }
 };
 
+const scenarioGuides = {
+  "tree-identify": {
+    demands: [
+      "整体轮廓要尽量稳定，便于读出树是否平衡、偏斜或展开不均。",
+      "父节点位置最好不要引入额外偏置，让观察重点留在结构本身。",
+      "左右宽度与层级分布需要保持可直接比较。"
+    ],
+    limitation:
+      "当前 demo 还没有直接优化 compactness，只是先通过父节点锚点变化观察整体轮廓。"
+  },
+  "tree-compare": {
+    demands: [
+      "不同布局状态之间的整体宽度、平衡性和展开方向要容易对照。",
+      "父节点位置应尽量中性，减少不必要的视觉偏移。",
+      "整体层级关系需要保持稳定，方便做轮廓比较。"
+    ],
+    limitation:
+      "当前 demo 还没有引入真正的任务目标加权，只先用对齐方式观察整体形态差异。"
+  },
+  "node-identify": {
+    demands: [
+      "重要节点要更容易成为视觉锚点，便于快速定位。",
+      "局部结构不应把注意力过多拉回父节点中点。",
+      "需要让高权重或高显著节点更早进入观察路径。"
+    ],
+    limitation:
+      "当前 demo 还没有加入局部强调或显著性强化，只先观察父节点朝关键节点偏移是否有帮助。"
+  },
+  "node-compare": {
+    demands: [
+      "候选节点之间的相对重要性要更容易读出。",
+      "布局应帮助视线更快落到被比较的关键节点上。",
+      "无关分支带来的视觉干扰需要尽量减少。"
+    ],
+    limitation:
+      "当前 demo 还没有控制局部分离或标签强调，只先用锚点偏移观察节点比较是否更直接。"
+  },
+  "subtree-identify": {
+    demands: [
+      "主导子树的体量、覆盖范围和结构容量要更容易暴露。",
+      "父节点位置应帮助读出哪一侧是更大的子树。",
+      "子树边界与展开宽度关系需要尽量清楚。"
+    ],
+    limitation:
+      "当前 demo 还没有显式分配更多子树空间，只先观察父节点对齐到大子树后的轮廓变化。"
+  },
+  "subtree-compare": {
+    demands: [
+      "被比较子树之间要更容易形成对照。",
+      "理想状态下需要更强的 separation、alignment 和 symmetry。",
+      "节点数与覆盖范围的差异应尽量直接可见。"
+    ],
+    limitation:
+      "当前 demo 还没有真的拉开子树间距，只先通过大子树对齐观察比较是否更顺手。"
+  },
+  "path-following": {
+    demands: [
+      "主路径要更连续，视线能够顺着层级自然向下跟踪。",
+      "最深延展方向需要尽量明确，减少分支干扰。",
+      "布局应帮助快速识别哪条根到叶路径最长。"
+    ],
+    limitation:
+      "当前 demo 还没有优化 path continuity 或路径周围留白，只先观察最深分支对齐的效果。"
+  },
+  "path-compare": {
+    demands: [
+      "两条候选路径的深度差异要更容易读出。",
+      "需要更清楚的纵向延展感和路径分离感。",
+      "父节点位置应帮助比较不同路径的终点深度。"
+    ],
+    limitation:
+      "当前 demo 还没有直接控制路径分离和连续性，只先用最深分支对齐做第一轮观察。"
+  }
+};
+
+const taskReference = {
+  "tree-identify": {
+    metrics: ["整体稳定性", "平衡性可读性", "轮廓中性"],
+    approximation: "先用中点对齐，尽量减少父节点额外偏移，让观察重点留在整体结构。"
+  },
+  "tree-compare": {
+    metrics: ["整体形态对照", "展开宽度比较", "层级关系稳定"],
+    approximation: "先用中点对齐作为基线，避免因为锚点偏移干扰不同树形之间的比较。"
+  },
+  "node-identify": {
+    metrics: ["关键节点显著性", "视觉锚点清晰度", "定位效率"],
+    approximation: "先用高权重节点对齐，把父节点拉向更重要的分支，观察关键节点是否更快进入视线。"
+  },
+  "node-compare": {
+    metrics: ["候选节点重要性比较", "注意力聚焦", "无关分支干扰控制"],
+    approximation: "先用高权重节点对齐，让视线更早落到可能被比较的关键节点附近。"
+  },
+  "subtree-identify": {
+    metrics: ["主导子树体量感", "覆盖范围可读性", "结构容量暴露"],
+    approximation: "先用大子树对齐，把父节点拉向规模更大的分支，观察主导子树是否更容易被识别。"
+  },
+  "subtree-compare": {
+    metrics: ["子树 separation", "子树 alignment", "局部 symmetry"],
+    approximation: "先用大子树对齐做第一轮近似，让父节点更偏向主要子树，再观察比较是否更直接。"
+  },
+  "path-following": {
+    metrics: ["路径连续性", "最深方向清晰度", "分支干扰抑制"],
+    approximation: "先用最深子树对齐，把父节点向主路径偏移，观察最长路径方向是否更自然。"
+  },
+  "path-compare": {
+    metrics: ["路径深度对照", "纵向延展感", "路径分离感"],
+    approximation: "先用最深子树对齐近似路径任务，帮助读出不同候选路径的终点深度差异。"
+  }
+};
+
+const extraLayoutFactors = [
+  "子树间距：overview 可以更紧凑，subtree comparison 可以把目标子树拉开。",
+  "层间距：depth 和 path 任务通常更需要更大的纵向间隔。",
+  "子树空间分配：给重要子树或目标路径更多横向预算。",
+  "子树顺序：在兄弟顺序没有语义约束时，可尝试把更重要或更大的子树放到更利于观察的位置。",
+  "分支几何：调整边的走向和连续性，帮助路径跟踪。",
+  "标签显隐与局部强调：根据任务突出关键节点、子树或路径。"
+];
+
 const datasets = {
   balanced: {
     id: "balanced",
@@ -988,6 +1107,12 @@ const dom = {
   actionButtons: document.getElementById("action-buttons"),
   targetButtons: document.getElementById("target-buttons"),
   taskLine: document.getElementById("task-line"),
+  taskSummary: document.getElementById("task-summary"),
+  taskDemands: document.getElementById("task-demands"),
+  taskAlignmentRole: document.getElementById("task-alignment-role"),
+  taskLimitation: document.getElementById("task-limitation"),
+  taskReferenceBody: document.getElementById("task-reference-body"),
+  extraFactors: document.getElementById("extra-factors"),
   datasetButtons: document.getElementById("dataset-buttons"),
   alignmentButtons: document.getElementById("alignment-buttons"),
   statsLine: document.getElementById("stats-line"),
@@ -1030,6 +1155,76 @@ function getAlignmentExplanation(alignmentId, scenarioId) {
     return "父节点直接对齐到向下延展最深的子节点。";
   }
   return "";
+}
+
+function getAlignmentRole(alignmentId) {
+  if (alignmentId === "center") {
+    return "当前先用中点对齐，让父节点尽量保持中性位置，便于观察整体轮廓和基线结构。";
+  }
+
+  if (alignmentId === "weighted") {
+    return "当前先用高权重节点对齐，把父节点拉向更重要的分支，观察关键节点是否更快成为视觉锚点。";
+  }
+
+  if (alignmentId === "subtree") {
+    return "当前先用大子树对齐，把父节点拉向规模更大的分支，观察子树体量差异是否更容易被读出。";
+  }
+
+  if (alignmentId === "deepest") {
+    return "当前先用最深子树对齐，把父节点拉向更深的分支，观察主路径方向是否更明确。";
+  }
+
+  return "";
+}
+
+function updateTaskGuide() {
+  const scenario = scenarios[state.scenario];
+  const guide = scenarioGuides[state.scenario];
+  const alignmentLabel =
+    alignmentModes.find((item) => item.id === state.alignment)?.label || state.alignment;
+  const isRecommended = state.alignment === scenario.recommendedAlignment;
+
+  dom.taskSummary.textContent = scenario.summary;
+  dom.taskDemands.innerHTML = "";
+
+  guide.demands.forEach((demand) => {
+    const item = document.createElement("li");
+    item.textContent = demand;
+    dom.taskDemands.appendChild(item);
+  });
+
+  dom.taskAlignmentRole.textContent = `${alignmentLabel}：${getAlignmentRole(state.alignment)}${
+    isRecommended ? " 这也是当前任务的推荐观察方式。" : " 这不是当前任务的默认推荐，更适合拿来做对照。"
+  }`;
+  dom.taskLimitation.textContent = guide.limitation;
+}
+
+function renderTaskReference() {
+  dom.taskReferenceBody.innerHTML = "";
+
+  Object.values(scenarios).forEach((scenario) => {
+    const reference = taskReference[scenario.id];
+    const recommendedAlignment =
+      alignmentModes.find((item) => item.id === scenario.recommendedAlignment)?.label ||
+      scenario.recommendedAlignment;
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${scenario.label}</td>
+      <td>${reference.metrics.join(" / ")}</td>
+      <td>${recommendedAlignment}</td>
+      <td>${reference.approximation}</td>
+    `;
+
+    dom.taskReferenceBody.appendChild(row);
+  });
+
+  dom.extraFactors.innerHTML = "";
+  extraLayoutFactors.forEach((factor) => {
+    const item = document.createElement("li");
+    item.textContent = factor;
+    dom.extraFactors.appendChild(item);
+  });
 }
 
 function buildButton(container, items, activeId, onClick) {
@@ -1084,6 +1279,7 @@ function updateControls() {
     alignmentModes.find((item) => item.id === currentScenario.recommendedAlignment)?.label ||
     currentScenario.recommendedAlignment;
   dom.taskLine.textContent = `当前任务：${currentScenario.label}。推荐对齐：${currentRecommendation}。`;
+  updateTaskGuide();
 
   buildButton(
     dom.datasetButtons,
@@ -1283,4 +1479,5 @@ window.addEventListener("resize", () => {
   }
 });
 
+renderTaskReference();
 render();

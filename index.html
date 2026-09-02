@@ -26,6 +26,14 @@
           <p id="task-line" class="task-line"></p>
         </div>
 
+        <div class="control-group task-panel">
+          <h2>任务解读</h2>
+          <p id="task-summary" class="task-summary"></p>
+          <ul id="task-demands" class="task-demands"></ul>
+          <p id="task-alignment-role" class="task-note"></p>
+          <p id="task-limitation" class="task-note task-note--muted"></p>
+        </div>
+
         <div class="control-group">
           <h2>数据</h2>
           <div id="dataset-buttons" class="button-grid"></div>
@@ -51,7 +59,33 @@
       </section>
     </main>
 
+    <section class="reference-section" aria-label="任务参考表">
+      <div class="reference-section__inner">
+        <h2>任务参考表</h2>
+        <p class="reference-intro">
+          先把当前 demo 中每个任务更重视的结构指标，以及目前用于近似它的推荐对齐方式列出来，便于和上方交互结果对照阅读。
+        </p>
+        <div class="table-wrap">
+          <table class="reference-table">
+            <thead>
+              <tr>
+                <th>任务</th>
+                <th>当前更重视的指标</th>
+                <th>推荐对齐方式</th>
+                <th>当前近似思路</th>
+              </tr>
+            </thead>
+            <tbody id="task-reference-body"></tbody>
+          </table>
+        </div>
+        <div class="reference-note-block">
+          <p class="reference-note-title">对齐方式以外，还可能修改的因素</p>
+          <ul id="extra-factors" class="reference-list"></ul>
+        </div>
+      </div>
+    </section>
+
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <script src="./main.js?v=15"></script>
+    <script src="./main.js?v=16"></script>
   </body>
 </html>
