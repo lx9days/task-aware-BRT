@@ -348,3 +348,49 @@ button {
     min-height: 620px;
   }
 }
+
+/* Task-aware BRT comparison interface */
+body { font-family: system-ui, "Microsoft YaHei", sans-serif; }
+.page-header { max-width: 1600px; margin: auto; padding: 24px 28px 8px; }
+.page-header h1 { margin: 0; font-size: 30px; }
+.page-header p { margin: 8px 0; color: var(--muted); }
+.demo-layout { max-width: 1900px; margin: auto; padding: 16px 28px 32px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+.comparison { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.tree-card, .controls { border: 1px solid var(--border); background: white; padding: 16px; min-width: 0; }
+.tree-card h2, .controls h2 { margin: 0 0 8px; font-size: 19px; }
+.tree-card > p { color: var(--muted); font-size: 13px; min-height: 32px; line-height: 1.5; }
+.tree-card svg { width: 100%; height: min(42vh, 760px); min-height: 620px; border: 1px solid var(--border); background: #fcfcfc; display: block; touch-action: none; cursor: grab; }
+.tree-card svg.is-panning { cursor: grabbing; }
+.tree-card .metrics { margin-bottom: 0; min-height: 48px; }
+.task-buttons { display: grid; gap: 7px; margin: 14px 0 20px; }
+.task-buttons button { text-align: left; border: 1px solid var(--border); background: white; padding: 10px 12px; cursor: pointer; }
+.task-buttons button[aria-pressed="true"] { background: #111; color: white; border-color: #111; }
+.secondary-button { width: 100%; margin: -6px 0 12px; border: 1px solid var(--border); background: #f6f6f6; padding: 9px 12px; cursor: pointer; }
+.controls label { display: block; font-weight: 600; font-size: 13px; margin: 12px 0 5px; }
+.controls select { width: 100%; padding: 9px 6px; border: 1px solid var(--border); background: white; }
+.selection-controls { margin: 14px 0; padding-top: 6px; border-top: 1px solid var(--border); }
+.selection-controls[hidden] { display: none; }
+.selection-controls p, .footnote { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.controls { max-width: none; position: sticky; top: 16px; align-self: start; }
+.policy-card { border-top: 1px solid var(--border); margin-top: 20px; padding-top: 12px; }
+.policy-card h3 { margin: 0 0 14px; font-size: 16px; }
+.policy-card dl { margin: 0; }
+.policy-card dt { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.policy-card dd { margin: 3px 0 0; overflow-wrap: anywhere; font-size: 13px; line-height: 1.5; }
+#selection-note { font-size: 12px; line-height: 1.6; margin-bottom: 0; }
+.edge { fill: none; stroke: #a6a6a6; stroke-width: 1.5; }
+.edge.path-edge { stroke: #d26935; stroke-width: 3; }
+.tree-node { cursor: pointer; }
+.tree-node circle { fill: white; stroke: #333; stroke-width: 2; }
+.tree-node.selected circle { stroke: #d26935; fill: #fff1e8; stroke-width: 3; }
+.tree-node text { text-anchor: middle; font-size: 13px; paint-order: stroke; stroke: white; stroke-width: 4px; }
+.viewport { will-change: transform; }
+.tree-content.is-fading { transition: opacity 120ms linear; }
+@media (max-width: 680px) {
+  .tree-card svg { min-height: 520px; height: 56vh; }
+  .demo-layout, .page-header { padding-left: 14px; padding-right: 14px; }
+}
+@media (max-width: 1180px) {
+  .demo-layout { grid-template-columns: minmax(0, 1fr); }
+  .controls { position: static; }
+}

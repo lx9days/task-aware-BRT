@@ -2,90 +2,66 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Adaptive Alignment Prototype</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Task-aware BRT 树布局实验</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <section class="toolbar" aria-label="布局控制区域">
-        <div class="control-group">
-          <h2>低级动作</h2>
-          <div id="action-buttons" class="button-grid compact-grid"></div>
+    <header class="page-header">
+      <h1>Task-aware BRT</h1>
+      <p>同一棵树 · 不同分析任务 · 同一个 BRT 放置引擎</p>
+    </header>
+    <main class="demo-layout">
+      <section class="comparison" aria-label="布局对照">
+        <div class="tree-card">
+          <h2>Original BRT</h2>
+          <p>保持原始兄弟顺序，父节点位于两端子节点中点</p>
+          <svg id="original-tree" role="img" aria-label="原始 BRT 树布局"></svg>
+          <p id="original-metrics" class="metrics"></p>
         </div>
-
-        <div class="control-group">
-          <h2>对象</h2>
-          <div id="target-buttons" class="button-grid compact-grid"></div>
-          <p id="task-line" class="task-line"></p>
-        </div>
-
-        <div class="control-group task-panel">
-          <h2>任务解读</h2>
-          <p id="task-summary" class="task-summary"></p>
-          <ul id="task-demands" class="task-demands"></ul>
-          <p id="task-alignment-role" class="task-note"></p>
-          <p id="task-limitation" class="task-note task-note--muted"></p>
-        </div>
-
-        <div class="control-group">
-          <h2>数据</h2>
-          <div id="dataset-buttons" class="button-grid"></div>
-        </div>
-
-        <div class="control-group">
-          <h2>对齐规则</h2>
-          <div id="alignment-buttons" class="button-grid"></div>
+        <div class="tree-card">
+          <h2>Task-aware BRT</h2>
+          <p id="aware-description">根据任务调整排序与对齐</p>
+          <svg id="aware-tree" role="img" aria-label="任务感知 BRT 树布局"></svg>
+          <p id="aware-metrics" class="metrics"></p>
         </div>
       </section>
-
-      <section class="canvas-section">
-        <div class="canvas-wrap">
-          <svg id="tree-svg" viewBox="0 0 1200 760" aria-label="树布局可视化">
-            <g class="viewport">
-              <g class="links"></g>
-              <g class="nodes"></g>
-            </g>
-          </svg>
-          <div id="tooltip" class="tooltip hidden"></div>
+      <aside class="controls" aria-label="任务控制">
+        <h2>分析任务</h2>
+        <div id="task-buttons" class="task-buttons" role="group" aria-label="选择任务"></div>
+        <button id="reset-view" class="secondary-button" type="button">重置视图</button>
+        <button id="reset-layout" class="secondary-button" type="button">恢复标准 BRT</button>
+        <label for="dataset-select">树数据</label>
+        <select id="dataset-select"></select>
+        <div id="compare-controls" class="selection-controls" hidden>
+          <label for="compare-a">比较子树 A</label>
+          <select id="compare-a"></select>
+          <label for="compare-b">比较子树 B</label>
+          <select id="compare-b"></select>
+          <p>也可以在树上依次点击两个节点。</p>
         </div>
-        <p id="stats-line" class="stats-line"></p>
-      </section>
+        <div id="trace-controls" class="selection-controls" hidden>
+          <label for="trace-target">路径目标节点</label>
+          <select id="trace-target"></select>
+          <p>也可以直接点击树上的目标节点。</p>
+        </div>
+        <section class="policy-card" aria-live="polite">
+          <h3>当前策略</h3>
+          <dl>
+            <dt>Task</dt><dd id="policy-task"></dd>
+            <dt>Ordering</dt><dd id="policy-ordering"></dd>
+            <dt>Alignment</dt><dd id="policy-alignment"></dd>
+            <dt>Objective</dt><dd id="policy-objective"></dd>
+            <dt>Stop</dt><dd id="policy-stop"></dd>
+            <dt>Actions</dt><dd id="policy-actions"></dd>
+            <dt>Region</dt><dd id="policy-region"></dd>
+          </dl>
+          <p id="selection-note"></p>
+        </section>
+        <p class="footnote">树画布支持滚轮缩放、拖拽平移和重置视图。当前 demo 采用标准 BRT 作为基线，再在有限区域内用 O/A/S 候选做局部贪心搜索。指标展示的是本文定义的几何代理 loss，不代表已验证的人体任务绩效。</p>
+      </aside>
     </main>
-
-    <section class="reference-section" aria-label="任务参考表">
-      <div class="reference-section__inner">
-        <h2>任务参考表</h2>
-        <p class="reference-intro">
-          先把当前 demo 中每个任务更重视的结构指标，以及目前用于近似它的推荐对齐方式列出来，便于和上方交互结果对照阅读。
-        </p>
-        <div class="table-wrap">
-          <table class="reference-table">
-            <thead>
-              <tr>
-                <th>任务</th>
-                <th>当前更重视的指标</th>
-                <th>推荐对齐方式</th>
-                <th>当前近似思路</th>
-              </tr>
-            </thead>
-            <tbody id="task-reference-body"></tbody>
-          </table>
-        </div>
-        <div class="reference-note-block">
-          <p class="reference-note-title">对齐方式以外，还可能修改的因素</p>
-          <ul id="extra-factors" class="reference-list"></ul>
-        </div>
-      </div>
-    </section>
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <script src="./main.js?v=16"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>

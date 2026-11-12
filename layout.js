@@ -80,7 +80,197 @@ export const scenarios = {
   }
 };
 
+function createLargeIrregularTree() {
+  let counter = 0;
+
+  function nextId(prefix = "N") {
+    counter += 1;
+    return `${prefix}${String(counter).padStart(3, "0")}`;
+  }
+
+  function makeNode(prefix, weight, children = []) {
+    const id = nextId(prefix);
+    return { id, label: id, weight, children };
+  }
+
+  function makeLeaf(weight, prefix = "L") {
+    return makeNode(prefix, weight);
+  }
+
+  function makeHeavySpine(length) {
+    let tail = makeNode("HP", 2.1, [makeLeaf(1.35, "HS"), makeLeaf(1.1, "HS")]);
+
+    for (let index = length - 1; index >= 0; index -= 1) {
+      const children = [];
+
+      if (index % 2 === 0) {
+        children.push(makeLeaf(1.8 - index * 0.08, "HS"));
+      }
+
+      if (index === 2) {
+        children.push(
+          makeNode("HW", 2.4, [makeLeaf(1.2, "HS"), makeLeaf(1.05, "HS"), makeLeaf(0.92, "HS")])
+        );
+      }
+
+      children.push(tail);
+      tail = makeNode("HP", 7.8 - index * 0.38, children);
+    }
+
+    return tail;
+  }
+
+  function makeMegaCanopy() {
+    const clusterSpecs = [
+      [8],
+      [3, 3],
+      [2, 2, 2],
+      [1, 1, 2, 2],
+      [1, 1, 1, 2, 2],
+      [1, 1, 1, 1, 2, 2],
+      [1, 1, 1, 1, 1, 2, 2],
+      [1, 1, 1, 1, 1, 1, 2, 2],
+      [1, 1, 1, 1, 1, 1, 1, 2, 2]
+    ];
+
+    const branches = clusterSpecs.map((leafCounts, branchIndex) => {
+      const clusters = leafCounts.map((leafCount, clusterIndex) => {
+        const leaves = Array.from({ length: leafCount }, (_, leafIndex) =>
+          makeLeaf(0.62 + ((branchIndex + clusterIndex + leafIndex) % 5) * 0.05, "MF")
+        );
+        return makeNode("MC", 0.84 + branchIndex * 0.03 + clusterIndex * 0.02, leaves);
+      });
+
+      return makeNode("MB", 0.96 + branchIndex * 0.04, clusters);
+    });
+
+    return makeNode("MG", 1.18, branches);
+  }
+
+  function makeRaggedFan() {
+    const fanSpecs = [0, 1, 0, 3, 1, 4, 0, 2, 5, 1, 0, 3, 2, 1];
+    const branches = fanSpecs.map((grandChildCount, index) => {
+      if (grandChildCount === 0) {
+        return makeLeaf(0.95 + (index % 4) * 0.08, "RF");
+      }
+
+      const grandChildren = Array.from({ length: grandChildCount }, (_, childIndex) => {
+        if (grandChildCount >= 4 && childIndex === grandChildCount - 1) {
+          return makeNode("RT", 1.12 + childIndex * 0.03, [makeLeaf(0.88, "RL"), makeLeaf(0.8, "RL")]);
+        }
+
+        return makeLeaf(0.82 + (childIndex % 3) * 0.07, "RL");
+      });
+
+      return makeNode("RF", 1.02 + index * 0.03, grandChildren);
+    });
+
+    return makeNode("RA", 1.35, branches);
+  }
+
+  function makeSparseDepthMix() {
+    let trunk = makeNode("SD", 1.24, [makeLeaf(0.92, "SL")]);
+
+    for (let index = 0; index < 7; index += 1) {
+      const children = [];
+
+      if (index % 3 !== 1) {
+        children.push(makeLeaf(1.08 + index * 0.04, "SL"));
+      }
+
+      if (index === 3) {
+        children.push(makeNode("SB", 1.6, [makeLeaf(1.05, "SL"), makeLeaf(0.94, "SL"), makeLeaf(0.9, "SL")]));
+      }
+
+      children.push(trunk);
+      trunk = makeNode("SD", 1.42 - index * 0.06, children);
+    }
+
+    return trunk;
+  }
+
+  function makeAsymmetricCrown() {
+    const specs = [
+      [],
+      [2],
+      [1, 3],
+      [],
+      [2, 1, 4],
+      [1],
+      [5, 2]
+    ];
+    const branches = specs.map((clusterCounts, index) => {
+      if (clusterCounts.length === 0) {
+        return makeLeaf(1.1 + index * 0.05, "AC");
+      }
+
+      const children = clusterCounts.map((leafCount, clusterIndex) =>
+        makeNode(
+          "AK",
+          1.02 + clusterIndex * 0.08,
+          Array.from({ length: leafCount }, (_, leafIndex) => makeLeaf(0.86 + leafIndex * 0.06, "AL"))
+        )
+      );
+
+      return makeNode("AC", 1.18 + index * 0.04, children);
+    });
+
+    return makeNode("AR", 1.58, branches);
+  }
+
+  return {
+    id: "A",
+    label: "A",
+    weight: 1,
+    children: [
+      makeHeavySpine(8),
+      makeMegaCanopy(),
+      makeRaggedFan(),
+      makeSparseDepthMix(),
+      makeAsymmetricCrown()
+    ]
+  };
+}
+
+function createMediumIrregularTree() {
+  const node = (id, children = [], weight = 1) => ({ id, label: id, weight, children });
+  const crown = (prefix, counts) => node(prefix, counts.map((count, branch) =>
+    node(`${prefix}${branch + 1}`, Array.from({ length: count }, (_, leaf) =>
+      node(`${prefix}${branch + 1}-${leaf + 1}`, [], 0.8 + leaf * 0.1)
+    ), 1.1 + branch * 0.15)
+  ));
+
+  // Stable IDs and asymmetric branches support repeatable Compare/Trace selections.
+  let spine = node("MD6", [node("MD6-L"), node("MD6-R")]);
+  for (let depth = 5; depth >= 1; depth -= 1) {
+    const side = node(`MD${depth}-S`, depth % 2 === 0
+      ? [node(`MD${depth}-S1`), node(`MD${depth}-S2`)]
+      : []);
+    spine = node(`MD${depth}`, depth % 2 === 0 ? [spine, side] : [side, spine], 1.8);
+  }
+
+  return node("M", [
+    crown("MA", [2, 4, 1, 3]),
+    crown("MB", [3, 1, 4, 2]),
+    crown("MC", [1, 0, 5, 2, 0]),
+    spine,
+    crown("ME", [2, 1, 3])
+  ]);
+}
+
 export const datasets = {
+  mediumIrregular: {
+    id: "mediumIrregular",
+    label: "中等规模不均匀树（72 节点）",
+    description: "72 个节点，包含两棵可比较子树 MA/MB、宽分支 MC、交替侧枝深链 MD1 和紧凑子树 ME。可比较 MA 与 MB，或追踪 MD6-L。",
+    root: createMediumIrregularTree()
+  },
+  largeIrregular: {
+    id: "largeIrregular",
+    label: "大规模不均匀树",
+    description: "包含爆发宽层、深链、重权重短支和超大子树，最大层约 100 个节点。",
+    root: createLargeIrregularTree()
+  },
   balanced: {
     id: "balanced",
     label: "对称树",
@@ -662,6 +852,16 @@ function ancestor(vil, node, defaultAncestor) {
 
 function getAlignmentTarget(node, options) {
   const centerX = midpoint(node.children);
+  const targetIds = options.alignmentTargets?.[node.id];
+
+  if (targetIds?.length) {
+    const targets = node.children.filter((child) => targetIds.includes(child.id));
+
+    if (targets.length) {
+      return targets.reduce((sum, child) => sum + child.prelim, 0) / targets.length;
+    }
+  }
+
   const anchorChild = getAnchorChild(node.children, options);
 
   if (options.alignment === "center") {
@@ -810,13 +1010,19 @@ export function summarizeTree(root) {
     internalNodes.length === 0
       ? 0
       : internalNodes.reduce((sum, node) => sum + node.children.length, 0) / internalNodes.length;
+  const levelCounts = new Map();
+
+  nodes.forEach((node) => {
+    levelCounts.set(node.depth, (levelCounts.get(node.depth) || 0) + 1);
+  });
 
   return {
     nodeCount: nodes.length,
     maxDepth: Math.max(...nodes.map((node) => node.depth)),
     leafCount: nodes.filter((node) => node.children.length === 0).length,
     avgBranchingFactor: avgBranching,
-    maxSubtreeSize: Math.max(...nodes.map((node) => node.subtreeSize))
+    maxSubtreeSize: Math.max(...nodes.map((node) => node.subtreeSize)),
+    maxBreadth: Math.max(...levelCounts.values())
   };
 }
 
@@ -831,10 +1037,12 @@ export function buildLayout(datasetId, options = {}) {
       ? options.weightInfluence
       : scenarioConfig.defaults.weightInfluence,
     levelGap: Number.isFinite(options.levelGap) ? options.levelGap : 140,
-    siblingGap: Number.isFinite(options.siblingGap) ? options.siblingGap : 124
+    siblingGap: Number.isFinite(options.siblingGap) ? options.siblingGap : 124,
+    alignmentTargets: options.alignmentTargets || {}
   };
 
-  const tree = createBrtTree(cloneTree(dataset.root));
+  const sourceRoot = options.root || dataset.root;
+  const tree = createBrtTree(cloneTree(sourceRoot));
   firstWalk(tree, resolvedOptions, 1);
 
   const positionedNodes = [];
@@ -863,7 +1071,7 @@ export function buildLayout(datasetId, options = {}) {
     options: resolvedOptions,
     nodes: positionedNodes,
     links: positionedLinks,
-    stats: summarizeTree(dataset.root),
+    stats: summarizeTree(sourceRoot),
     bounds: {
       minX,
       maxX,
